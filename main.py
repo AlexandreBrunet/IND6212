@@ -31,8 +31,11 @@ statut_id_mapping =  {
     "Ouvert": 1
 }
 
+#adding description_id column
 df['description_id'] = df['description'].map(description_id_mapping)
+#adding statudt_id column
 df['statut_id'] = df['statut'].map(statut_id_mapping)
+#remove columns without any description
 df_filtered = df.dropna(subset=['description_id'])
 nombre_de_lignes_2 = df_filtered.shape[0]
 #Nombre de lignes dans le DataFrame : 6553
