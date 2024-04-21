@@ -1,6 +1,9 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
 
 df = pd.read_csv('./data/violations.csv')
 nombre_de_lignes = df.shape[0]
@@ -28,27 +31,67 @@ description_id_mapping = {
 statut_id_mapping =  {
     "Fermé": 0,
     "Fermé changement d'exploitant": 0,
-    "Ouvert": 1
+    "Ouvert": 1,
+    "Sous inspection fédérale": 1
+}
+
+categorie_id_mapping =  {
+    "Restaurant": 1,
+    "Restaurant service rapide": 2,
+    "Épicerie avec préparation": 3,
+    "Boucherie-épicerie": 4,
+    "Pâtisserie": 5,
+    "Boulangerie": 6,
+    "Casse-croûte": 7,
+    "Restaurant mets pour emporter": 8,
+    "Supermarché": 9,
+    "Traiteur ": 10,
+    "Charcuterie/fromage": 11,
+    "Charcuterie": 12,
+    "Épicerie": 13,
+    "Poissonnerie": 14,
+    "Brasserie": 15,
+    
 }
 
 #adding description_id column
 df['description_id'] = df['description'].map(description_id_mapping)
-#adding statudt_id column
+#adding statut_id column
 df['statut_id'] = df['statut'].map(statut_id_mapping)
+#adding categorie_id column
+df['categorie_id'] = df['statut'].map(categorie_id_mapping)
+
 #remove columns without any description
 df_filtered = df.dropna(subset=['description_id'])
-nombre_de_lignes_2 = df_filtered.shape[0]
+
+#Nombre de categorie distint d'etablissement: 42
+num_etablissement = df['categorie'].nunique()
+print("Nombre de categorie distinct d'etablissement:", num_etablissement)
+
 #Nombre de lignes dans le DataFrame : 6553
-print("Nombre de lignes dans le DataFrame :", nombre_de_lignes_2)
+nombre_de_lignes_2 = df_filtered.shape[0]
+print("Nombre de lignes dans le DataFrame avec les principales catégories:", nombre_de_lignes_2)
 
-counts_per_description_id = df_filtered['description_id'].value_counts().sort_index()
-print(counts_per_description_id)
+# Nombre de lignes avec statut_id = 0
+nb_lignes_statut_0 = df_filtered[df_filtered['statut_id'] == 0].shape[0]
+print("Nombre de lignes avec statut_id égal à 0 :", nb_lignes_statut_0)
 
-counts_per_statut_id = df_filtered['statut_id'].value_counts().sort_index()
-print(counts_per_statut_id)
+# Nombre de lignes avec statut_id = 1
+nb_lignes_statut_1 = df_filtered[df_filtered['statut_id'] == 1].shape[0]
+print("Nombre de lignes avec statut_id égal à 1 :", nb_lignes_statut_1)
 
-colonnes_selectionnees = df_filtered[['montant', 'description_id', 'statut_id']]
-print(colonnes_selectionnees)
+# Comptage du nombre de lignes par catégorie dans df_filtered
+comptage_par_categorie = df_filtered['categorie'].value_counts()
 
+# Filtrage des catégories avec un count >= 30
+catégories_filtrees = comptage_par_categorie[comptage_par_categorie >= 30].index
 
+# Filtrage des lignes dans df_filtered
+df_filtre_final = df_filtered[df_filtered['categorie'].isin(catégories_filtrees)]
 
+# Affichage du nombre de lignes dans le DataFrame filtré
+nombre_de_lignes_final = df_filtre_final.shape[0]
+print("Nombre de lignes dans le DataFrame filtré:", nombre_de_lignes_final)
+
+num_etablissement_2 = df_filtre_final['categorie'].nunique()
+print("Nombre de categorie distinct d'etablissement:", num_etablissement_2)
