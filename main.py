@@ -45,13 +45,12 @@ categorie_id_mapping =  {
     "Casse-croûte": 7,
     "Restaurant mets pour emporter": 8,
     "Supermarché": 9,
-    "Traiteur ": 10,
+    "Traiteur": 10,
     "Charcuterie/fromage": 11,
     "Charcuterie": 12,
     "Épicerie": 13,
     "Poissonnerie": 14,
-    "Brasserie": 15,
-    
+    "Brasserie": 15
 }
 
 #adding description_id column
@@ -59,7 +58,7 @@ df['description_id'] = df['description'].map(description_id_mapping)
 #adding statut_id column
 df['statut_id'] = df['statut'].map(statut_id_mapping)
 #adding categorie_id column
-df['categorie_id'] = df['statut'].map(categorie_id_mapping)
+df['categorie_id'] = df['categorie'].map(categorie_id_mapping)
 
 #remove columns without any description
 df_filtered = df.dropna(subset=['description_id'])
@@ -95,3 +94,5 @@ print("Nombre de lignes dans le DataFrame filtré:", nombre_de_lignes_final)
 
 num_etablissement_2 = df_filtre_final['categorie'].nunique()
 print("Nombre de categorie distinct d'etablissement:", num_etablissement_2)
+
+print(df_filtre_final.head(10))
